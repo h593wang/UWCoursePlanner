@@ -1,40 +1,56 @@
 package cah593wang.uwaterloo.cs.student.httpswww.uwcourse;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+
 class section {
 
-    int classNum;
-    int lecNum;
-    String campLoc;
-    int [] enrol = new int [2];
-    int [] times = new int  [7];
-    String room;
-    String room2;
-    String inst;
-    String instQual;
-    String wta;
-    String lod;
-    boolean hotness;
+    public int classNum;
+    public int lecNum;
+    public String campLoc;
+    public int [] enrol = new int [2];
+    public int [] times = new int  [7];
+    public String room;
+    public String room2;
+    public String inst;
+    public String instQual;
+    public String wta;
+    public String lod;
+    public boolean hotness;
 }
 
-public class course extends webScrape {
+public class course  {
 
 
-    section [] cour;
+    public section [] cour;
+    public int count;
 
     public course() {}
 
-    public course (String dep, int courseCode, int term) {
-        int lecCount = getSecCount(dep, courseCode, term);
-        this.cour = new section[lecCount];
-        for (int i = 0; i < lecCount; i++){
+    public course (String info) {
+        this.count = getSecCount(info);
+        this.cour = new section[count];
+        for (int i = 0; i < count; i++){
             cour[i] = new section();
-            populateUW(i, getRawDataUW(i + 1, dep, courseCode, term, lecCount));
+            populateUW(i + 1, info);
 
-            populateRMP(i, getRawDataRMP( cour[i].inst));
+            //populateRMP(i, getRawDataRMP( cour[i].inst));
         }
     }
 
     void populateUW(int sec,  String data) {
+
+        if (sec < 10) {
+            if (!(data.charAt(0) == 'L' && data.charAt(1) == 'E' && data.charAt(2) == 'C' && data.charAt(5) == '0' && Character.getNumericValue(data.charAt(6)) == sec)) {
+                data = data.substring(1);
+            }
+        } else {
+            if (!(data.charAt(0) == 'L' && data.charAt(1) == 'E' && data.charAt(2) == 'C' && Character.getNumericValue(data.charAt(5)) == sec/10 && Character.getNumericValue(data.charAt(6)) == sec%10)) {
+                data = data.substring(1);
+            }
+        }
+
         //getting class id
         data = skipToData(data);
         cour[sec].classNum = 1000 * Character.getNumericValue(data.charAt(0));
@@ -185,7 +201,6 @@ public class course extends webScrape {
         if (!(sec < 9 && data.contains("LEC 00" + Integer.toString(sec + 2))) &&
                 !(sec <99 && data.contains("LEC 0" + Integer.toString(sec + 2))) && !data.contains("TST")
                 && data.contains(":") && !data.contains("Reserve") && !data.contains("TUT")) {
-            System.out.println(data);
             while(data.charAt(2) != ':') {
                 data = data.substring(1);
             }
@@ -226,7 +241,7 @@ public class course extends webScrape {
         return orig;
     }
 
-    void populateRMP (int sec, String data) {
+    /*void populateRMP (int sec, String data) {
         if (data.equals("ERROR")) {
             cour[sec].instQual = "N/A";
             cour[sec].lod = "N/A";
@@ -254,10 +269,91 @@ public class course extends webScrape {
         if (data.contains("hot")) cour[sec].hotness = true;
         else cour[sec].hotness=false;
     }
+*/
+
+    int getSecCount(String info){
+
+        int count = 1;
+        while (info.contains("LEC 00"+count) || info.contains("LEC 0"+count)) {
+            count++;
+        }
+        return count - 1;
+    }
 
 
 
+    /*static String getRawDataRMP(String inst) {
+        try {
+            String [] parts = inst.split(",");
+            parts[1] = parts[1].split(" ")[0];
+            //System.out.println(parts[1] + " " + parts[0]);
+            URL course = new URL("http://www.ratemyprofessors.com/search.jsp?query=" + parts[1] + "+" + parts[0] + "+waterloo");
+            BufferedReader in = new BufferedReader(new InputStreamReader(course.openStream()));
+
+            String inputLine = in.readLine();
+
+            while ((!inputLine.contains("<!-- Starts One professor Listing -->"))) {
+                inputLine = in.readLine();
+
+            }
+            while ((!inputLine.contains("tid"))) {
+                inputLine = in.readLine();
+            }
 
 
+            while (!(inputLine.charAt(0) == 't' && inputLine.charAt(1) == 'i' && inputLine.charAt(2) == 'd' && inputLine.charAt(3) == '=')) {
+                inputLine = inputLine.substring(1);
+            }
+            inputLine = inputLine.substring(4);
+            int pid = 0;
+            while (inputLine.charAt(0) != '"') {
+                pid *= 10;
+                pid += Character.getNumericValue(inputLine.charAt(0));
+                inputLine = inputLine.substring(1);
+            }
+            in.close();
+
+            URL rmpPage = new URL("http://www.ratemyprofessors.com/ShowRatings.jsp?tid=" + pid);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(rmpPage.openStream()));
+
+            inputLine = reader.readLine();
+
+            while ((!inputLine.contains("Overall Quality"))) {
+                inputLine = reader.readLine();
+            }
+            inputLine = reader.readLine();
+            String result = inputLine;
+
+            while ((!inputLine.contains("takeAgain"))) {
+                inputLine = reader.readLine();
+            }
+            result += inputLine;
+
+            while ((!inputLine.contains("Level of Difficulty"))) {
+                inputLine = reader.readLine();
+            }
+            while ((!inputLine.contains("."))) {
+                inputLine = reader.readLine();
+            }
+            result += inputLine;
+
+            while ((!inputLine.contains(".png"))) {
+                inputLine = reader.readLine();
+            }
+            result += inputLine;
+            reader.close();
+            //System.out.println(result);
+            return result ;
+        }
+        catch (Exception e) {
+            return "ERROR";
+        }
+
+    }
+    */
 }
+
+
+
+
 

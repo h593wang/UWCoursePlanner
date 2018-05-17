@@ -1,33 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/termEditText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:hint="term"
+        android:inputType="textPersonName"
+        android:textColor="?attr/actionMenuTextColor"
+        android:textColorLink="?attr/actionMenuTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:onClick="sendMessage"
+        android:text="@string/button_send"
+        app:layout_constraintBaseline_toBaselineOf="@+id/termEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/termEditText" />
 
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_main" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <EditText
+        android:id="@+id/courseCodeEditTest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:hint="Course Code"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/termEditText"
+        app:layout_constraintStart_toStartOf="@+id/termEditText" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <EditText
+        android:id="@+id/departmentEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:hint="Department"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/courseCodeEditTest"
+        app:layout_constraintStart_toStartOf="@+id/courseCodeEditTest" />
+
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="31dp"
+        tools:layout_editor_absoluteY="67dp" />
+</android.support.constraint.ConstraintLayout>
