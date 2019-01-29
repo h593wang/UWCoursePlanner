@@ -12,7 +12,8 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="TextView"
-        tools:width="120dp" />
+        tools:width="120dp"
+        android:layout_margin="16dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

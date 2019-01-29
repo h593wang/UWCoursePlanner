@@ -10,8 +10,8 @@
         android:id="@+id/termEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="term"
         android:inputType="textPersonName"
@@ -26,9 +26,9 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:onClick="sendMessage"
+        android:layout_marginEnd="16dp"
+        android:onClick="searchClass"
         android:text="@string/button_send"
         app:layout_constraintBaseline_toBaselineOf="@+id/termEditText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,10 +57,43 @@
         app:layout_constraintBottom_toTopOf="@+id/courseCodeEditTest"
         app:layout_constraintStart_toStartOf="@+id/courseCodeEditTest" />
 
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="31dp"
-        tools:layout_editor_absoluteY="67dp" />
+    <HorizontalScrollView
+        android:id="@+id/classCalScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/classSumScoll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/classCal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/classSumScoll"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/departmentEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/classSum"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+
 </android.support.constraint.ConstraintLayout>

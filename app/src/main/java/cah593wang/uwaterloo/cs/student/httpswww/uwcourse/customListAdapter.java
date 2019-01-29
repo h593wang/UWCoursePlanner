@@ -9,29 +9,22 @@ import android.widget.TextView;
 
 public class customListAdapter extends ArrayAdapter {
     private final Activity context;
-    private final String[] lecNum;
-    private final String[] inst;
-    private final String[] time;
-
-    public customListAdapter(Activity context, String[] lecNum, String[] inst, String[] time) {
-        super(context,R.layout.listview_row,lecNum);
+    public customListAdapter(Activity context, Course course) {
+        super(context,R.layout.listview_row, course.cour);
         this.context = context;
-        this.lecNum = lecNum;
-        this.inst = inst;
-        this.time = time;
     }
 
     public View getView (int position, View view, ViewGroup parent) {
-        LayoutInflater inflater=context.getLayoutInflater();
-        View rowView=inflater.inflate(R.layout.listview_row, null, true);
 
-        TextView instTextView = (TextView) rowView.findViewById(R.id.instTextView);
-        TextView timeTextView = (TextView) rowView.findViewById(R.id.timeTextView);
-        TextView lecTextView = (TextView) rowView.findViewById(R.id.lecTextView);
+        View rowView=LayoutInflater.from(context).inflate(R.layout.listview_row, parent, false);
 
-        instTextView.setText(inst[position]);
-        timeTextView.setText(time[position]);
-        lecTextView.setText(lecNum[position]);
+        TextView instTextView =  rowView.findViewById(R.id.instTextView);
+        TextView timeTextView =  rowView.findViewById(R.id.timeTextView);
+        TextView lecTextView =  rowView.findViewById(R.id.lecTextView);
+
+        instTextView.setText(((section)getItem(position)).getInst());
+        timeTextView.setText(((section)getItem(position)).getTimes()[0]+"-"+((section)getItem(position)).getTimes()[1]);
+        lecTextView.setText(String.valueOf(((section)getItem(position)).getLecNum()));
 
         return rowView;
     }
