@@ -57,7 +57,7 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                         7 -> cour[curIndex].enrollCur = safeGetInt(field)
                         //8 ->
                         //9 ->
-                        10 -> cour[curIndex].times = safeGet(field)
+                        10 -> cour[curIndex].times = normalizeTime(safeGet(field))
                         11 -> cour[curIndex].room = safeGet(field)
                         12 -> cour[curIndex].inst = safeGet(field)
                     }
@@ -65,7 +65,14 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                     fieldIndex++
                 }
             }
+            //todo handle additional data
         }
+    }
+
+    private fun normalizeTime(time: String): String {
+        var time = time.replace("T", "Tu")
+        time = time.replace("Tuh", "Th")
+        return time
     }
 
     private fun safeGet (field: Element): String {

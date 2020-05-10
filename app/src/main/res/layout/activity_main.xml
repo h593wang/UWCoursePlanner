@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".MainActivity">
 
     <EditText
@@ -28,7 +30,6 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:onClick="searchClass"
         android:text="@string/button_send"
         app:layout_constraintBaseline_toBaselineOf="@+id/termEditText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,43 +58,53 @@
         app:layout_constraintBottom_toTopOf="@+id/courseCodeEditTest"
         app:layout_constraintStart_toStartOf="@+id/courseCodeEditTest" />
 
-    <HorizontalScrollView
-        android:id="@+id/classCalScroll"
+    <ImageView
+        android:id="@+id/canvas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/classSumScoll"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+    </ImageView>
 
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/classCal"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" />
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:id="@+id/classSumScoll"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/departmentEditText"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/classSum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent">
 
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/classSum"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" />
-    </HorizontalScrollView>
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Search For Classes"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/departmentEditText"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Cart"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/classSum"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

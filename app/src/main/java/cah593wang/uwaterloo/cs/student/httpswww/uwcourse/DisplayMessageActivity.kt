@@ -1,18 +1,23 @@
 package cah593wang.uwaterloo.cs.student.httpswww.uwcourse
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.NetworkOnMainThreadException
 import android.support.v7.app.AppCompatActivity
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.AdapterView.OnItemLongClickListener
+import android.view.View
+import android.widget.AdapterView.*
+import android.widget.Button
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
-import cah593wang.uwaterloo.cs.student.httpswww.uwcourse.DisplayMessageActivity
 
 class DisplayMessageActivity : AppCompatActivity() {
     lateinit var course: Course
+    lateinit var display: ListView
+
     @Throws(NetworkOnMainThreadException::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,16 +34,32 @@ class DisplayMessageActivity : AppCompatActivity() {
                 mainHandler.post(myRunnable)
             }
         }
+
+        findViewById<Button>(R.id.button).setOnClickListener {
+            val returnIntent = Intent()
+            val checkBoxes = (display.adapter as CustomListAdapter).checkBoxes
+            var serializedResult = ArrayList<Section>()
+            for (i in checkBoxes.indices) {
+                if (checkBoxes[i]?.isChecked ?: false) {
+                    serializedResult.add(display.adapter.getItem(i) as Section)
+                }
+            }
+            returnIntent.putExtra("RESULT", serializedResult)
+            setResult(Activity.RESULT_OK,returnIntent)
+            finish()
+        }
     }
 
     private fun initAdapter() {
+        findViewById<TextView>(R.id.loading).visibility = View.GONE
+
         val adapter = CustomListAdapter(this, course)
-        val out = findViewById<ListView>(R.id.display)
-        out.adapter = adapter
-        out.onItemClickListener = OnItemClickListener { adapterView, view, i, l -> //TODO add info to database
+        display = findViewById<ListView>(R.id.display)
+        display.adapter = adapter
+        display.onItemClickListener = OnItemClickListener { adapterView, view, i, l -> //TODO add info to database
             Toast.makeText(this@DisplayMessageActivity, "todo", Toast.LENGTH_SHORT).show()
         }
-        out.onItemLongClickListener = OnItemLongClickListener { parent, view, position, id ->
+        display.onItemLongClickListener = OnItemLongClickListener { parent, view, position, id ->
             Toast.makeText(this@DisplayMessageActivity, "todo", Toast.LENGTH_SHORT).show()
             false
         }
