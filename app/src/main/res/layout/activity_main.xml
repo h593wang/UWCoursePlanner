@@ -42,7 +42,7 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Course Code"
-        android:inputType="textPersonName"
+        android:inputType="textPersonName|textCapSentences"
         app:layout_constraintBottom_toTopOf="@+id/termEditText"
         app:layout_constraintStart_toStartOf="@+id/termEditText" />
 
@@ -53,7 +53,7 @@
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:hint="Department"
-        android:inputType="textPersonName"
+        android:inputType="textPersonName|textCapCharacters"
         app:layout_constraintBottom_toTopOf="@+id/courseCodeEditTest"
         app:layout_constraintStart_toStartOf="@+id/courseCodeEditTest" />
 
