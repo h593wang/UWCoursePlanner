@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.TextView
 
 class CustomListAdapter(private var context: Activity, course: Course) : ArrayAdapter<Any?>(context, R.layout.listview_row, course.cour.toArray()) {
-    var checkBoxes = Array<CheckBox?>(course.cour.size) {null}
+    var checkBoxes = Array(course.cour.size) {false}
 
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         val rowView = view ?: LayoutInflater.from(context).inflate(R.layout.listview_row, parent, false)
@@ -17,11 +18,14 @@ class CustomListAdapter(private var context: Activity, course: Course) : ArrayAd
         val timeTextView = rowView.findViewById<TextView>(R.id.timeTextView)
         val lecTextView = rowView.findViewById<TextView>(R.id.lecTextView)
         val checkBox = rowView.findViewById<CheckBox>(R.id.checkBox)
+        checkBox.isChecked = checkBoxes[position]
         instTextView.text = (getItem(position) as Section).inst
         timeTextView.text = (getItem(position) as Section).times
         lecTextView.text = (getItem(position) as Section).lecTitle
 
-        checkBoxes[position] = checkBox
+        checkBox.setOnClickListener() { view ->
+            checkBoxes[position] = (view as CheckBox).isChecked || !checkBoxes[position]
+        }
         return rowView
     }
 }

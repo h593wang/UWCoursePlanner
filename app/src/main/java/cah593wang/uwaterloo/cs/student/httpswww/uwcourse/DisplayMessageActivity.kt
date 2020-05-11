@@ -40,7 +40,7 @@ class DisplayMessageActivity : AppCompatActivity() {
             val checkBoxes = (display.adapter as CustomListAdapter).checkBoxes
             var serializedResult = ArrayList<Section>()
             for (i in checkBoxes.indices) {
-                if (checkBoxes[i]?.isChecked ?: false) {
+                if (checkBoxes[i]) {
                     serializedResult.add(display.adapter.getItem(i) as Section)
                 }
             }

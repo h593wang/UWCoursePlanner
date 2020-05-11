@@ -35,6 +35,7 @@ class HorizontalListAdapter(private var context: Activity, val course: ArrayList
         holder.itemView.findViewById<TextView>(R.id.lecTextView).text = course[position].classNum.toString() + " - " + course[position].lecTitle
         holder.itemView.findViewById<TextView>(R.id.instTextView).text = course[position].inst
         holder.itemView.findViewById<TextView>(R.id.timeTextView).text = course[position].times
+        holder.itemView.findViewById<TextView>(R.id.lecName).text = course[position].className
         holder.itemView.findViewById<Button>(R.id.delete).setOnClickListener(deleteListener)
         holder.itemView.setOnClickListener(listener)
     }

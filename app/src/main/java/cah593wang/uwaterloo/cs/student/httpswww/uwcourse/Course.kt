@@ -43,6 +43,7 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
             if (ele.childNode(0).childNode(0).toString().trim().matches(Regex("[0-9]+"))) {
                 curIndex++
                 cour.add(Section())
+                cour[curIndex].className = "$dep $courseCode"
                 //unfortunately ill have to assume its always ordered, and the order doesn't change on their end
                 var fieldIndex = 0
                 ele.getElementsByTag("td").forEach { field ->

@@ -11,6 +11,7 @@ import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.TypedValue
 import android.view.View
 import android.widget.*
 
@@ -21,11 +22,20 @@ class MainActivity : AppCompatActivity() {
     lateinit var display: RecyclerView
     lateinit var canvas: Canvas
     var paint = Paint()
+    var textPaint = Paint()
     lateinit var bitmap: Bitmap
     var rect = Rect()
     var courseColor = 0
     var conflictColor = 0
     var backgroundColor = 0
+    var white = 0
+    var black = 0
+
+    var width: Int = 0
+    var height: Int = 0
+    val headerSize = 50f
+    var sectionWidth = 0
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -87,9 +97,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         findViewById<Button>(R.id.button3).setOnClickListener {searchClass()}
         imageView = findViewById<ImageView>(R.id.canvas)
+        imageView.viewTreeObserver.addOnGlobalLayoutListener { redrawCanvas() }
         conflictColor = ResourcesCompat.getColor(resources, R.color.conflict, null)
         courseColor = ResourcesCompat.getColor(resources, R.color.course, null)
-        backgroundColor = ResourcesCompat.getColor(resources, R.color.white, null)
+        backgroundColor = ResourcesCompat.getColor(resources, R.color.grey, null)
+        white = ResourcesCompat.getColor(resources, R.color.white, null)
+        black = ResourcesCompat.getColor(resources, R.color.black, null)
 
         paint.color = backgroundColor
 
@@ -97,9 +110,108 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun redrawCanvas() {
-        val width = imageView.width
-        val height = imageView.height
+        width = imageView.width
+        height = imageView.height
+
+        // 5 weekdays + 2 half width weekends
+        sectionWidth = width/6
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        imageView.setImageBitmap(bitmap)
+
+        canvas = Canvas(bitmap)
+        canvas.drawColor(backgroundColor)
+
+        var xPosition = sectionWidth/ 2.toFloat()
+        paint.color = white
+        //sunday
+        canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
+        //monday
+        xPosition += sectionWidth
+        canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
+        //tuesday
+        xPosition += sectionWidth
+        canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
+        //wednesday
+        xPosition += sectionWidth
+        canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
+        //thursday
+        xPosition += sectionWidth
+        canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
+        //friday
+        xPosition += sectionWidth
+        canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
+
+        canvas.drawLine(0f, 50f, width.toFloat(), headerSize, paint)
+
+        textPaint.color = black
+        textPaint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12F, resources.displayMetrics)
+        val yVal = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, resources.displayMetrics)
+        xPosition = 10f
+        canvas.drawText("Sun", xPosition, yVal, textPaint)
+        xPosition += sectionWidth*3/4
+        canvas.drawText("Mon", xPosition, yVal, textPaint)
+        xPosition += sectionWidth
+        canvas.drawText("Tue", xPosition, yVal, textPaint)
+        xPosition += sectionWidth
+        canvas.drawText("Wed", xPosition, yVal, textPaint)
+        xPosition += sectionWidth
+        canvas.drawText("Thu", xPosition, yVal, textPaint)
+        xPosition += sectionWidth
+        canvas.drawText("Fri", xPosition, yVal, textPaint)
+        xPosition += sectionWidth*3/4
+        canvas.drawText("Sat", xPosition, yVal, textPaint)
+
+        paint.color = courseColor
+        textPaint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 7F, resources.displayMetrics)
+        selectedSections.forEach {
+            drawSection(it)
+        }
     }
+
+    private fun drawSection(section: Section) {
+        val startY = ((section.getStartHour()*60 + section.getStartMin() - 4*60f) / (18*60f) * height)
+        val endY =   ((section.getEndHour()*60 + section.getEndMin() - 4*60f) / (18*60f) * height)
+        val offset = 25f
+        val line = 20f
+
+        if (section.times.contains("Su")) {
+            canvas.drawRoundRect(0f, startY, sectionWidth/2f, endY, 10f, 10f, paint)
+            canvas.drawText(section.className, 0 + offset, startY + offset, textPaint)
+            canvas.drawText(section.lecTitle, 0 + offset, startY + offset + line, textPaint)
+
+        }
+        if (section.times.contains("M")) {
+            canvas.drawRoundRect(sectionWidth/2f, startY, sectionWidth/2f + sectionWidth, endY, 10f, 10f, paint)
+            canvas.drawText(section.className, sectionWidth/2f + offset, startY + offset, textPaint)
+            canvas.drawText(section.lecTitle, sectionWidth/2f + offset, startY + offset + line, textPaint)
+        }
+        if (section.times.contains("Tu")) {
+            canvas.drawRoundRect(sectionWidth/2f + sectionWidth, startY, sectionWidth/2f + 2*sectionWidth, endY, 10f, 10f, paint)
+            canvas.drawText(section.className, sectionWidth/2f + sectionWidth + offset, startY + offset, textPaint)
+            canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth + offset, startY + offset + line, textPaint)
+        }
+        if (section.times.contains("W")) {
+            canvas.drawRoundRect(sectionWidth/2f + 2*sectionWidth, startY, sectionWidth/2f + 3*sectionWidth, endY, 10f, 10f, paint)
+            canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 2 + offset, startY + offset, textPaint)
+            canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 2 + offset, startY + offset + line, textPaint)
+        }
+        if (section.times.contains("Th")) {
+            canvas.drawRoundRect(sectionWidth/2f + 3*sectionWidth, startY, sectionWidth/2f + 4*sectionWidth, endY, 10f, 10f, paint)
+            canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 3 + offset, startY + offset, textPaint)
+            canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 3 + offset, startY + offset + line, textPaint)
+        }
+        if (section.times.contains("F")) {
+            canvas.drawRoundRect(sectionWidth/2f + 4*sectionWidth, startY, sectionWidth/2f + 5*sectionWidth, endY, 10f, 10f, paint)
+            canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 4 + offset, startY + offset, textPaint)
+            canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 4 + offset, startY + offset + line, textPaint)
+        }
+        if (section.times.contains("S")) {
+            canvas.drawRoundRect(sectionWidth/2f + 5*sectionWidth, startY,  6f*sectionWidth, endY, 10f, 10f, paint)
+            canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 5 + offset, startY + offset, textPaint)
+            canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 5 + offset, startY + offset + line, textPaint)
+        }
+    }
+
 
     fun searchClass() {
         val intent = Intent(this, DisplayMessageActivity::class.java)
