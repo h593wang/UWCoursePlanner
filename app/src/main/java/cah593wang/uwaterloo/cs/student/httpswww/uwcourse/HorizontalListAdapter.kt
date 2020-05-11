@@ -11,7 +11,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 
-class HorizontalListAdapter(private var context: Activity, val course: ArrayList<Section>, val listener:View.OnClickListener, val deleteListener:View.OnClickListener) : RecyclerView.Adapter<HorizontalListAdapter.ViewHolder>() {
+class HorizontalListAdapter(private var context: Activity, val course: ArrayList<Section>, val selectedSections: ArrayList<Section>, val listener:View.OnClickListener, val deleteListener:View.OnClickListener) : RecyclerView.Adapter<HorizontalListAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -29,8 +29,18 @@ class HorizontalListAdapter(private var context: Activity, val course: ArrayList
         if (course.size == 0) {
             holder.itemView.findViewById<TextView>(R.id.lecTextView).text = "Empty"
             holder.itemView.findViewById<Button>(R.id.delete).visibility = View.GONE
+            holder.itemView.findViewById<TextView>(R.id.instTextView).text = ""
+            holder.itemView.findViewById<TextView>(R.id.timeTextView).text = ""
+            holder.itemView.findViewById<TextView>(R.id.lecName).text = ""
+            holder.itemView.isSelected = false
+            holder.itemView.setOnClickListener {  }
             return
         }
+        holder.itemView.isSelected = false
+        selectedSections.forEach {
+            if (it.classNum == course[position].classNum) holder.itemView.isSelected = true
+        }
+
         holder.itemView.findViewById<Button>(R.id.delete).visibility = View.VISIBLE
         holder.itemView.findViewById<TextView>(R.id.lecTextView).text = course[position].classNum.toString() + " - " + course[position].lecTitle
         holder.itemView.findViewById<TextView>(R.id.instTextView).text = course[position].inst

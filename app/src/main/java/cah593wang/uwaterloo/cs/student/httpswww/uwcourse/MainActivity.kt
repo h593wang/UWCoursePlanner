@@ -1,6 +1,7 @@
 package cah593wang.uwaterloo.cs.student.httpswww.uwcourse
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -14,6 +15,11 @@ import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.View
 import android.widget.*
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+
 
 class MainActivity : AppCompatActivity() {
     var sectionList = ArrayList<Section>()
@@ -35,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     var height: Int = 0
     val headerSize = 50f
     var sectionWidth = 0
+    val offset = 25f
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -54,13 +61,21 @@ class MainActivity : AppCompatActivity() {
     private fun initAdapter() {
         display = findViewById(R.id.classSum)
 
-        val adapter = HorizontalListAdapter(this, sectionList, View.OnClickListener { view ->
+        val adapter = HorizontalListAdapter(this, sectionList, selectedSections, View.OnClickListener { view ->
             view.isSelected = view.isSelected != true
             processCartClick(view.findViewById<TextView>(R.id.lecTextView).text.toString(), view.isSelected)
         }, View.OnClickListener { view ->
             val indexToDelete = getIndexByTitle((view.parent as View).findViewById<TextView>(R.id.lecTextView).text.toString())
+            val idToRemove = sectionList[indexToDelete].classNum
             sectionList.removeAt(indexToDelete)
             display.adapter.notifyDataSetChanged()
+            for (i in selectedSections.indices) {
+                if (selectedSections[i].classNum == idToRemove) {
+                    selectedSections.removeAt(i)
+                    break
+                }
+            }
+            redrawCanvas()
         })
         val linearLayoutManager =  LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayout.HORIZONTAL
@@ -70,6 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun processCartClick(text: String, selection: Boolean) {
+        if (sectionList.size == 0) return
         val indexClicked = getIndexByTitle(text)
         if (selection) selectedSections.add(sectionList[indexClicked])
         else {
@@ -95,6 +111,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        try {
+            val fis2: FileInputStream = openFileInput("cart.data")
+            val is2 = ObjectInputStream(fis2)
+            sectionList = is2.readObject() as ArrayList<Section>
+            is2.close()
+            fis2.close()
+
+            val fis: FileInputStream = openFileInput("selected.data")
+            val ins = ObjectInputStream(fis)
+            selectedSections = ins.readObject() as ArrayList<Section>
+            ins.close()
+            fis.close()
+
+        } catch (e: Exception) {
+        }
+
         findViewById<Button>(R.id.button3).setOnClickListener {searchClass()}
         imageView = findViewById<ImageView>(R.id.canvas)
         imageView.viewTreeObserver.addOnGlobalLayoutListener { redrawCanvas() }
@@ -107,6 +140,20 @@ class MainActivity : AppCompatActivity() {
         paint.color = backgroundColor
 
         initAdapter()
+    }
+
+    override fun onStop() {
+        val fos: FileOutputStream = getApplicationContext().openFileOutput("selected.data", Context.MODE_PRIVATE)
+        val fos2: FileOutputStream = getApplicationContext().openFileOutput("cart.data", Context.MODE_PRIVATE)
+        val os = ObjectOutputStream(fos)
+        val os2 = ObjectOutputStream(fos2)
+        os.writeObject(selectedSections)
+        os2.writeObject(sectionList)
+        os.close()
+        fos.close()
+        os2.close()
+        fos2.close()
+        super.onStop()
     }
 
     private fun redrawCanvas() {
@@ -166,12 +213,48 @@ class MainActivity : AppCompatActivity() {
         selectedSections.forEach {
             drawSection(it)
         }
+
+        //detect conflicts
+        paint.color = conflictColor
+        val timeRanges = ArrayList<IntRange>(selectedSections.size)
+        for (i in selectedSections.indices) {
+            val sec = selectedSections[i]
+            timeRanges.add(IntRange(sec.getStartHour()*60+sec.getStartMin(), sec.getEndHour()*60 + sec.getEndMin()))
+        }
+        for (i in timeRanges.indices) {
+            for (x in timeRanges.indices) {
+                if (i == x) continue
+                var foundCommonDate = false
+                if (timeRanges[i]?.contains(timeRanges[x].start) || timeRanges[i].contains(timeRanges[x].endInclusive)) {
+                    //theres an intersect
+                    val maxStart = Math.max(timeRanges[i].start, timeRanges[x].start)
+                    val minEnd = Math.min(timeRanges[i].endInclusive, timeRanges[x].endInclusive)
+                    val startY = ((maxStart - 7*60f) / (15*60f) * height)
+                    val endY = ((minEnd - 7*60f) / (15*60f) * height)
+
+                    if (selectedSections[i].times.contains("Su") && selectedSections[x].times.contains("Su"))
+                        canvas.drawRoundRect(0f, startY,  sectionWidth/2f, endY, 10f, 10f, paint)
+                    if (selectedSections[i].times.contains("M") && selectedSections[x].times.contains("M"))
+                        canvas.drawRoundRect(sectionWidth/2f, startY,  sectionWidth/2f + sectionWidth, endY, 10f, 10f, paint)
+                    if (selectedSections[i].times.contains("Tu") && selectedSections[x].times.contains("Tu"))
+                        canvas.drawRoundRect(sectionWidth/2f + sectionWidth, startY,  sectionWidth/2f + 2*sectionWidth, endY, 10f, 10f, paint)
+                    if (selectedSections[i].times.contains("W") && selectedSections[x].times.contains("W"))
+                        canvas.drawRoundRect(sectionWidth/2f + 2*sectionWidth, startY,  sectionWidth/2f + 3f*sectionWidth, endY, 10f, 10f, paint)
+                    if (selectedSections[i].times.contains("Th") && selectedSections[x].times.contains("Th"))
+                        canvas.drawRoundRect(sectionWidth/2f + 3*sectionWidth, startY,  sectionWidth/2f + 4f*sectionWidth, endY, 10f, 10f, paint)
+                    if (selectedSections[i].times.contains("F") && selectedSections[x].times.contains("F"))
+                        canvas.drawRoundRect(sectionWidth/2f + 4*sectionWidth, startY,  sectionWidth/2f + 5f*sectionWidth, endY, 10f, 10f, paint)
+                    if (selectedSections[i].times.contains("S") && selectedSections[x].times.contains("S"))
+                        canvas.drawRoundRect(sectionWidth/2f + 5*sectionWidth, startY,  6f*sectionWidth, endY, 10f, 10f, paint)
+                }
+            }
+        }
     }
 
     private fun drawSection(section: Section) {
-        val startY = ((section.getStartHour()*60 + section.getStartMin() - 4*60f) / (18*60f) * height)
-        val endY =   ((section.getEndHour()*60 + section.getEndMin() - 4*60f) / (18*60f) * height)
-        val offset = 25f
+        val startY = ((section.getStartHour()*60 + section.getStartMin() - 7*60f) / (15*60f) * height)
+        val endY = ((section.getEndHour()*60 + section.getEndMin() - 7*60f) / (15*60f) * height)
+
         val line = 20f
 
         if (section.times.contains("Su")) {
@@ -211,7 +294,6 @@ class MainActivity : AppCompatActivity() {
             canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 5 + offset, startY + offset + line, textPaint)
         }
     }
-
 
     fun searchClass() {
         val intent = Intent(this, DisplayMessageActivity::class.java)
