@@ -21,7 +21,7 @@ class Section : Serializable {
     var wta: String = ""
     var lod: String = ""
 
-    constructor() {}
+    constructor()
     constructor(classNum: Int, lecNum: String?, campLoc: String?, enrollMax: Int, enrollCur: Int, times: String?, room: String?, room2: String?, inst: String?, instQual: String?, wta: String?, lod: String?, hotness: Boolean) {
         this.classNum = classNum
         this.lecTitle = lecNum ?: ""

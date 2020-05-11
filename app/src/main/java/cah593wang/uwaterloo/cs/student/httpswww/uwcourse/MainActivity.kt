@@ -156,6 +156,11 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    override fun onPause() {
+        super.onPause()
+    }
+
+    //NN
     private fun redrawCanvas() {
         width = imageView.width
         height = imageView.height
@@ -187,6 +192,14 @@ class MainActivity : AppCompatActivity() {
         //friday
         xPosition += sectionWidth
         canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
+
+
+        val yStep = height/15f
+        var yPosition = 0f
+        for (i in 0 until 15) {
+            yPosition += yStep
+            canvas.drawLine(0f,yPosition,height.toFloat(), yPosition, paint)
+        }
 
         canvas.drawLine(0f, 50f, width.toFloat(), headerSize, paint)
 
@@ -295,11 +308,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //NN
     fun searchClass() {
         val intent = Intent(this, DisplayMessageActivity::class.java)
         val termEditText = findViewById<EditText>(R.id.termEditText)
         val term = termEditText.text.toString().toInt()
-        termEditText.setText("")
 
         val courseEditText = findViewById<EditText>(R.id.courseCodeEditTest)
         val course = courseEditText.text.toString().toInt()
