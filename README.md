@@ -1,6 +1,7 @@
 # UWCoursePlanner
 
 University of Waterloo week course planner. Pulls info by webscraping from the university website.
+VISUALS UNFINISHED
 
 ### Screenshots for Shopify 
 Initial empty screen
