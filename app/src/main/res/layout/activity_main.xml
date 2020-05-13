@@ -6,114 +6,177 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/termEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:ems="10"
-        android:hint="term"
-        android:inputType="textPersonName"
-        android:textColor="?attr/actionMenuTextColor"
-        android:textColorLink="?attr/actionMenuTextColor"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/button_send"
-        app:layout_constraintBaseline_toBaselineOf="@+id/termEditText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/termEditText" />
-
-    <EditText
-        android:id="@+id/courseCodeEditTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:ems="10"
-        android:hint="Course Code"
-        android:inputType="textPersonName|textCapSentences"
-        app:layout_constraintBottom_toTopOf="@+id/termEditText"
-        app:layout_constraintStart_toStartOf="@+id/termEditText" />
-
-    <EditText
-        android:id="@+id/departmentEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:ems="10"
-        android:hint="Department"
-        android:inputType="textPersonName|textCapCharacters"
-        app:layout_constraintBottom_toTopOf="@+id/courseCodeEditTest"
-        app:layout_constraintStart_toStartOf="@+id/courseCodeEditTest" />
 
     <ImageView
         android:id="@+id/canvas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        android:background="@drawable/primary_rect"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"></ImageView>
+        app:layout_constraintTop_toBottomOf="@+id/availableSections" />
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/classSum"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/availableSections"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        android:background="@drawable/arch"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Course Calendar"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent">
-
-
-    </android.support.v7.widget.RecyclerView>
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Search For Classes"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/departmentEditText"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Cart"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/classSum"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Calendar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/light_rect"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/accent_line"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:paddingBottom="1dp"
+            android:text="Courses Cart"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/classSum"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/classSum"
+            android:layout_width="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+
+        </android.support.v7.widget.RecyclerView>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/arch_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/dark_rect"
+            android:text="Search"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <EditText
+            android:id="@+id/termEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/white_rect"
+            android:ems="10"
+            android:hint="term (1199, F19, eg.)"
+            android:inputType="textPersonName"
+            android:padding="8dp"
+            android:textColor="?attr/actionMenuTextColor"
+            android:textColorLink="?attr/actionMenuTextColor"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button3"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/departmentEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/white_rect"
+            android:ems="10"
+            android:hint="Department (MATH eg.)"
+            android:inputType="textPersonName|textCapCharacters"
+            android:padding="8dp"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/courseCodeEditTest"
+            app:layout_constraintEnd_toEndOf="@+id/courseCodeEditTest"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/courseCodeEditTest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/white_rect"
+            android:ems="10"
+            android:hint="Course Code (135 eg.)"
+            android:inputType="number"
+            android:padding="8dp"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/termEditText"
+            app:layout_constraintEnd_toEndOf="@+id/termEditText"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/accent_line"
+            android:text="Search For Classes"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/departmentEditText"
+            app:layout_constraintEnd_toEndOf="@id/constraintLayout2"
+            app:layout_constraintStart_toStartOf="@id/constraintLayout2"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
 
 
 </android.support.constraint.ConstraintLayout>

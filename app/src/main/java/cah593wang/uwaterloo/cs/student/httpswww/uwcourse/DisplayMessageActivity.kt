@@ -25,7 +25,8 @@ class DisplayMessageActivity : AppCompatActivity() {
         val department = intent.getStringExtra(DEP)
         val courseNum = intent.getIntExtra(COURSE_NUM, 0)
         val term = intent.getIntExtra(TERM, 0)
-        course = object : Course(department, courseNum, term) {
+        findViewById<TextView>(R.id.availableSections).bringToFront()
+        course = object : Course(department, courseNum, term, this.application) {
             override fun onCourseReturned() {
                 val mainHandler = Handler(Looper.getMainLooper());
                 val myRunnable = Runnable {

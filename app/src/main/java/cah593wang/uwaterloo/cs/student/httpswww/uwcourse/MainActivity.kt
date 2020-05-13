@@ -3,15 +3,13 @@ package cah593wang.uwaterloo.cs.student.httpswww.uwcourse
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.os.Bundle
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.TextPaint
 import android.util.TypedValue
 import android.view.View
 import android.widget.*
@@ -28,12 +26,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var display: RecyclerView
     lateinit var canvas: Canvas
     var paint = Paint()
-    var textPaint = Paint()
+    var textPaint = TextPaint()
     lateinit var bitmap: Bitmap
     var rect = Rect()
     var courseColor = 0
     var conflictColor = 0
     var backgroundColor = 0
+    var accentColor = 0
     var white = 0
     var black = 0
 
@@ -132,12 +131,14 @@ class MainActivity : AppCompatActivity() {
         imageView = findViewById<ImageView>(R.id.canvas)
         imageView.viewTreeObserver.addOnGlobalLayoutListener { redrawCanvas() }
         conflictColor = ResourcesCompat.getColor(resources, R.color.conflict, null)
-        courseColor = ResourcesCompat.getColor(resources, R.color.course, null)
-        backgroundColor = ResourcesCompat.getColor(resources, R.color.grey, null)
+        courseColor = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
+        backgroundColor = ResourcesCompat.getColor(resources, R.color.colorMiddle, null)
+        accentColor = ResourcesCompat.getColor(resources, R.color.colorPrimaryDark, null)
         white = ResourcesCompat.getColor(resources, R.color.white, null)
         black = ResourcesCompat.getColor(resources, R.color.black, null)
 
         paint.color = backgroundColor
+        textPaint.typeface = ResourcesCompat.getFont(this, R.font.segoe)
 
         initAdapter()
     }
@@ -156,14 +157,11 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     //NN
     private fun redrawCanvas() {
         width = imageView.width
         height = imageView.height
+        if (width == 0 || height == 0) return
 
         // 5 weekdays + 2 half width weekends
         sectionWidth = width/6
@@ -171,7 +169,13 @@ class MainActivity : AppCompatActivity() {
         imageView.setImageBitmap(bitmap)
 
         canvas = Canvas(bitmap)
-        canvas.drawColor(backgroundColor)
+        paint.color=backgroundColor
+        canvas.drawRoundRect(0f,0f, width.toFloat(), height.toFloat(), 10f, 10f, paint)
+
+        paint.color = accentColor
+        canvas.drawRoundRect(0f,0f,width.toFloat(), headerSize,10f, 10f, paint)
+        canvas.drawRect(0f,10f,width.toFloat(), headerSize, paint)
+
 
         var xPosition = sectionWidth/ 2.toFloat()
         paint.color = white
@@ -193,17 +197,23 @@ class MainActivity : AppCompatActivity() {
         xPosition += sectionWidth
         canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
 
-
+        //draw hour marks
         val yStep = height/15f
         var yPosition = 0f
+        textPaint.color = accentColor
         for (i in 0 until 15) {
             yPosition += yStep
-            canvas.drawLine(0f,yPosition,height.toFloat(), yPosition, paint)
+            if (i == 4) {
+                canvas.drawText("12PM", 10f, yPosition-5, textPaint)
+                paint.color = accentColor
+            }
+            if (yPosition > headerSize) canvas.drawLine(0f,yPosition,width.toFloat(), yPosition, paint)
+            paint.color = white
         }
 
         canvas.drawLine(0f, 50f, width.toFloat(), headerSize, paint)
 
-        textPaint.color = black
+        textPaint.color = white
         textPaint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12F, resources.displayMetrics)
         val yVal = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, resources.displayMetrics)
         xPosition = 10f
@@ -312,7 +322,14 @@ class MainActivity : AppCompatActivity() {
     fun searchClass() {
         val intent = Intent(this, DisplayMessageActivity::class.java)
         val termEditText = findViewById<EditText>(R.id.termEditText)
-        val term = termEditText.text.toString().toInt()
+        val term = termEditText.text.toString()
+        var termFormatted = 0
+        if (Regex("[0-9][0-9][0-9][0-9]").matches(term)) termFormatted = term.toInt()
+        else if (Regex("[FWS][0-9][0-9]").matches(term)) {
+            if (term[0] == 'F') termFormatted = 1000 + 100*term[1].toString().toInt() + 10 * term[2].toString().toInt() + 9
+            else if (term[0] == 'W') termFormatted = 1000 + 100*term[1].toString().toInt() + 10 * term[2].toString().toInt() + 1
+            else if (term[0] == 'S') termFormatted = 1000 + 100*term[1].toString().toInt() + 10 * term[2].toString().toInt() + 5
+        }
 
         val courseEditText = findViewById<EditText>(R.id.courseCodeEditTest)
         val course = courseEditText.text.toString().toInt()
@@ -323,8 +340,8 @@ class MainActivity : AppCompatActivity() {
         depEditText.setText("")
         intent.putExtra(DEP, dep.toUpperCase())
         intent.putExtra(COURSE_NUM, course)
-        intent.putExtra(TERM, term)
-        startActivityForResult(intent, REQUEST_CODE)
+        intent.putExtra(TERM, termFormatted)
+        if (termFormatted != 0) startActivityForResult(intent, REQUEST_CODE)
     }
 
     companion object {
