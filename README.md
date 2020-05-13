@@ -16,19 +16,19 @@ Updated Screenshots coming
 
 Initial empty screen
 
-<img src="Screenshot_20200511-092131.jpg" alt="drawing" width="300"/>
+<img src="Screenshot_20200513-194850.jpg" alt="drawing" width="300"/>
 
 ---
-Courses search result screen, TODO add class location to layout and listview adapter
+Courses search result screen
 
-<img src="Screenshot_20200511-092135.jpg" alt="drawing" width="300"/>
+<img src="Screenshot_20200513-194906.jpg" alt="drawing" width="300"/>
 
 ---
 Courses in cart and added to calendar screen
 
-<img src="Screenshot_20200511-092227.jpg" alt="drawing" width="300"/>
+<img src="Screenshot_20200513-194910.jpg" alt="drawing" width="300"/>
 
 ---
-Time conflict screen
+Courses added to calendar and time conflict screen
 
-<img src="Screenshot_20200511-092419.jpg" alt="drawing" width="300"/>
+<img src="Screenshot_20200513-194916.jpg" alt="drawing" width="300"/>
