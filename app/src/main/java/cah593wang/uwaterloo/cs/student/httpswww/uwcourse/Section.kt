@@ -5,9 +5,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import java.io.Serializable
 
-@Entity(tableName = "sectionInfo")
 class Section : Serializable {
-    @PrimaryKey
     var classNum = 0
     var className = ""
     var lecTitle = ""

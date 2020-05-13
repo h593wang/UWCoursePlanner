@@ -21,11 +21,13 @@ class HorizontalListAdapter(private var context: Activity, val course: ArrayList
     }
 
     override fun getItemCount(): Int {
+        //if its empty, we still want a placeholder item
         if (course.size == 0) return 1
         return course.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //handling for placeholder item
         if (course.size == 0) {
             holder.itemView.findViewById<TextView>(R.id.lecTextView).text = "Empty"
             holder.itemView.findViewById<Button>(R.id.delete).visibility = View.GONE
@@ -36,11 +38,14 @@ class HorizontalListAdapter(private var context: Activity, val course: ArrayList
             holder.itemView.setOnClickListener {  }
             return
         }
+
+        //set the selection status based on the selectedSections info
         holder.itemView.isSelected = false
         selectedSections.forEach {
             if (it.classNum == course[position].classNum) holder.itemView.isSelected = true
         }
 
+        //setting the text based on the section
         holder.itemView.findViewById<Button>(R.id.delete).visibility = View.VISIBLE
         holder.itemView.findViewById<TextView>(R.id.lecTextView).text = course[position].classNum.toString() + " - " + course[position].lecTitle
         holder.itemView.findViewById<TextView>(R.id.instTextView).text = course[position].inst

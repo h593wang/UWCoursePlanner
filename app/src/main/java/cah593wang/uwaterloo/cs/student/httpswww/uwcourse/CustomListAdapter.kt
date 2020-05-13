@@ -14,6 +14,8 @@ class CustomListAdapter(private var context: Activity, course: Course) : ArrayAd
 
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         val rowView = view ?: LayoutInflater.from(context).inflate(R.layout.listview_row, parent, false)
+
+        //if its the first item, add margins so it wont be under the header
         if (position == 0) {
             if (!this::layoutDefault.isInitialized)layoutDefault = rowView.findViewById<ConstraintLayout>(R.id.layout).layoutParams as ConstraintLayout.LayoutParams
             val layout = ConstraintLayout.LayoutParams((rowView.findViewById<ConstraintLayout>(R.id.layout).layoutParams as ConstraintLayout.LayoutParams))
@@ -22,6 +24,7 @@ class CustomListAdapter(private var context: Activity, course: Course) : ArrayAd
         } else {
             rowView.findViewById<ConstraintLayout>(R.id.layout).layoutParams = layoutDefault
         }
+
         val instTextView = rowView.findViewById<TextView>(R.id.instTextView)
         val timeTextView = rowView.findViewById<TextView>(R.id.timeTextView)
         val lecTextView = rowView.findViewById<TextView>(R.id.lecTextView)
@@ -30,24 +33,28 @@ class CustomListAdapter(private var context: Activity, course: Course) : ArrayAd
         val room = rowView.findViewById<TextView>(R.id.room)
         val capacity = rowView.findViewById<TextView>(R.id.capacity)
 
+        //setting the text based on the section info
         checkBox.isChecked = checkBoxes[position]
         instQual.text = "LOADING"
-
         instTextView.text = (getItem(position) as Section).inst
         timeTextView.text = (getItem(position) as Section).times
         lecTextView.text = (getItem(position) as Section).lecTitle
         room.text = (getItem(position) as Section).room
         capacity.text = (getItem(position) as Section).enrollCur.toString() + "/" +(getItem(position) as Section).enrollMax
 
+        //when the item is clicked, toggle the checkBox
         rowView.setOnClickListener() { view ->
             checkBox.toggle()
             checkBoxes[position] = !checkBoxes[position]
         }
+
+        //if the prof data is ready, use it
         if ((context.application as ApplicationBase).profRatings[(getItem(position) as Section).inst]?.value?.first != "LOADING" || (context.application as ApplicationBase).profRatings[(getItem(position) as Section).inst]?.value?.first != "N/A" ) {
             instQual.text = (context.application as ApplicationBase).profRatings[(getItem(position) as Section).inst]?.value?.first  ?: "N/A"
         }
+        //if its not ready, observe it until it is
         (context.application as ApplicationBase).profRatings[(getItem(position) as Section).inst]?.observeForever {
-            //this is stupid
+            //this is stupid, since the items are reused, we need to make sure its still the prof we want
             if (it?.second == (instQual.parent as ViewGroup).findViewById<TextView>(R.id.instTextView).text)
                 instQual.text = it?.first ?: "N/A"
         }

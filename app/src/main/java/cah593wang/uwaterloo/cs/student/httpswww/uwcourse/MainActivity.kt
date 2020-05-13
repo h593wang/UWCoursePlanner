@@ -42,11 +42,12 @@ class MainActivity : AppCompatActivity() {
     var sectionWidth = 0
     val offset = 25f
 
-
+    //handle selected sections returned by the search result selection activity (DisplayMessageActivity)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val newEntries = data?.getSerializableExtra("RESULT")
             if (newEntries != null) {
+                //only add it if we don't already have a copy
                 (newEntries as ArrayList<Section>).forEach { sec ->
                     var contains = false
                     sectionList.forEach { ownedSec -> if (ownedSec.classNum == sec.classNum) contains = true}
@@ -54,38 +55,47 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        //update the cart recyclerview
         display.adapter.notifyDataSetChanged()
     }
 
+    //initialize the cart recyclerview
     private fun initAdapter() {
         display = findViewById(R.id.classSum)
-
+        //create a instance of the custom adapter, pass it all the sections in the cart along with the selected ones (might be selected form save data
         val adapter = HorizontalListAdapter(this, sectionList, selectedSections, View.OnClickListener { view ->
+            //listener for when a view is selected
             view.isSelected = view.isSelected != true
             processCartClick(view.findViewById<TextView>(R.id.lecTextView).text.toString(), view.isSelected)
         }, View.OnClickListener { view ->
+            //listener for when the x is clicked
             val indexToDelete = getIndexByTitle((view.parent as View).findViewById<TextView>(R.id.lecTextView).text.toString())
             val idToRemove = sectionList[indexToDelete].classNum
+            //remove it from the section set
             sectionList.removeAt(indexToDelete)
-            display.adapter.notifyDataSetChanged()
+            //if it was selected, remove it from the selected set
             for (i in selectedSections.indices) {
                 if (selectedSections[i].classNum == idToRemove) {
                     selectedSections.removeAt(i)
                     break
                 }
             }
+            //update the adapter and the graphics
+            display.adapter.notifyDataSetChanged()
             redrawCanvas()
         })
         val linearLayoutManager =  LinearLayoutManager(this)
         linearLayoutManager.orientation = LinearLayout.HORIZONTAL
         display.layoutManager = linearLayoutManager
         display.adapter = adapter
-
     }
 
-    private fun processCartClick(text: String, selection: Boolean) {
+    //processing for whenever a cart section is clicked
+    private fun processCartClick(lectureInfo: String, selection: Boolean) {
+        //if it was the place holder empty item, return
         if (sectionList.size == 0) return
-        val indexClicked = getIndexByTitle(text)
+        //get the index based on the class number contained inside lectureInfo
+        val indexClicked = getIndexByTitle(lectureInfo)
         if (selection) selectedSections.add(sectionList[indexClicked])
         else {
             val sectionNum = sectionList[indexClicked].classNum
@@ -99,8 +109,9 @@ class MainActivity : AppCompatActivity() {
         redrawCanvas()
     }
 
-    private fun getIndexByTitle(text: String): Int {
-        val classNum = text.split(" - ")[0]
+    //get the index of the section with the given classInfo
+    private fun getIndexByTitle(classInfo: String): Int {
+        val classNum = classInfo.split(" - ")[0]
         for (i in sectionList.indices) {
             if (sectionList[i].classNum == classNum.toInt()) return i
         }
@@ -111,6 +122,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //load saved data
         try {
             val fis2: FileInputStream = openFileInput("cart.data")
             val is2 = ObjectInputStream(fis2)
@@ -128,6 +140,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.button3).setOnClickListener {searchClass()}
+        //setting up the canvas for the calandar view
         imageView = findViewById<ImageView>(R.id.canvas)
         imageView.viewTreeObserver.addOnGlobalLayoutListener { redrawCanvas() }
         conflictColor = ResourcesCompat.getColor(resources, R.color.conflict, null)
@@ -140,9 +153,11 @@ class MainActivity : AppCompatActivity() {
         paint.color = backgroundColor
         textPaint.typeface = ResourcesCompat.getFont(this, R.font.segoe)
 
+        //initialize the cart recycler view adapter
         initAdapter()
     }
 
+    //save the data
     override fun onStop() {
         val fos: FileOutputStream = getApplicationContext().openFileOutput("selected.data", Context.MODE_PRIVATE)
         val fos2: FileOutputStream = getApplicationContext().openFileOutput("cart.data", Context.MODE_PRIVATE)
@@ -158,16 +173,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     //NN
+    //redraws the calendar based on the current selected set
     private fun redrawCanvas() {
         width = imageView.width
         height = imageView.height
         if (width == 0 || height == 0) return
 
-        // 5 weekdays + 2 half width weekends
         sectionWidth = width/6
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         imageView.setImageBitmap(bitmap)
 
+        //drawing the header
         canvas = Canvas(bitmap)
         paint.color=backgroundColor
         canvas.drawRoundRect(0f,0f, width.toFloat(), height.toFloat(), 10f, 10f, paint)
@@ -176,7 +192,7 @@ class MainActivity : AppCompatActivity() {
         canvas.drawRoundRect(0f,0f,width.toFloat(), headerSize,10f, 10f, paint)
         canvas.drawRect(0f,10f,width.toFloat(), headerSize, paint)
 
-
+        // 5 weekdays + 2 half width weekends, draws the vertical lines
         var xPosition = sectionWidth/ 2.toFloat()
         paint.color = white
         //sunday
@@ -197,7 +213,7 @@ class MainActivity : AppCompatActivity() {
         xPosition += sectionWidth
         canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
 
-        //draw hour marks
+        //draw hour marks, horizontal line
         val yStep = height/15f
         var yPosition = 0f
         textPaint.color = accentColor
@@ -231,6 +247,7 @@ class MainActivity : AppCompatActivity() {
         xPosition += sectionWidth*3/4
         canvas.drawText("Sat", xPosition, yVal, textPaint)
 
+        //drawing the sections
         paint.color = courseColor
         textPaint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 7F, resources.displayMetrics)
         selectedSections.forEach {
@@ -242,13 +259,13 @@ class MainActivity : AppCompatActivity() {
         val timeRanges = ArrayList<IntRange>(selectedSections.size)
         for (i in selectedSections.indices) {
             val sec = selectedSections[i]
+            if (sec.times == "TBA") continue
             timeRanges.add(IntRange(sec.getStartHour()*60+sec.getStartMin(), sec.getEndHour()*60 + sec.getEndMin()))
         }
         for (i in timeRanges.indices) {
             for (x in timeRanges.indices) {
                 if (i == x) continue
-                var foundCommonDate = false
-                if (timeRanges[i]?.contains(timeRanges[x].start) || timeRanges[i].contains(timeRanges[x].endInclusive)) {
+                if (timeRanges[i].contains(timeRanges[x].start) || timeRanges[i].contains(timeRanges[x].endInclusive)) {
                     //theres an intersect
                     val maxStart = Math.max(timeRanges[i].start, timeRanges[x].start)
                     val minEnd = Math.min(timeRanges[i].endInclusive, timeRanges[x].endInclusive)
@@ -274,7 +291,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //code for drawing the given section onto the calendar
     private fun drawSection(section: Section) {
+        if (section.times == "TBA") return
         val startY = ((section.getStartHour()*60 + section.getStartMin() - 7*60f) / (15*60f) * height)
         val endY = ((section.getEndHour()*60 + section.getEndMin() - 7*60f) / (15*60f) * height)
 
@@ -319,11 +338,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     //NN
+
+    //formats data and passet it to the DisplayMessageActivity
     fun searchClass() {
         val intent = Intent(this, DisplayMessageActivity::class.java)
         val termEditText = findViewById<EditText>(R.id.termEditText)
         val term = termEditText.text.toString()
         var termFormatted = 0
+        //TODO validate the entered info
+
+        //handling the #### format or the [FWS]## format
         if (Regex("[0-9][0-9][0-9][0-9]").matches(term)) termFormatted = term.toInt()
         else if (Regex("[FWS][0-9][0-9]").matches(term)) {
             if (term[0] == 'F') termFormatted = 1000 + 100*term[1].toString().toInt() + 10 * term[2].toString().toInt() + 9

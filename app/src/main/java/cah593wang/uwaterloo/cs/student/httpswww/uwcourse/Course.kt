@@ -13,31 +13,29 @@ import java.net.URL
 
 abstract class Course(private var dep: String?, private var courseCode: Int, private var term: Int, val application: Application) {
     var dataString = ""
-    var count = 0
-    lateinit var dataDoc : Document
 
     abstract fun onCourseReturned()
 
     lateinit var cour: ArrayList<Section>
 
     init {
+        //start by getting the html from the Uwaterloo registrar site
         GetInfoTask().execute((URL("http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl?level=under&sess=$term&subject=$dep&cournum=$courseCode")))
     }
 
-    fun initCourse() {
-        populateUW()
-        onCourseReturned()
-    }
-
-    private fun populateUW() {
+    //create the section instances based on the html
+    private fun populateUW(dataDoc: Element) {
         cour = ArrayList()
+        //get the tags that contain tables
         var elementArr = dataDoc.getElementsByTag("tr")
         lateinit var eleTable :Element
         elementArr.forEach { ele ->
             ele.getElementsByTag("table")?.let { if (it.size != 0) eleTable = it[0] }
         }
 
+        //get the rows from the table
         elementArr = eleTable.getElementsByTag("tr")
+        //first row is always the column titles, not needed
         elementArr.removeAt(0)
 
         var curIndex = -1
@@ -69,6 +67,7 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                 }
                 //rate my prof handling
                 if (!(application as ApplicationBase).profRatings.containsKey(cour[curIndex].inst)) {
+                    //create new livedata and rate my prof task if one doesnt exist yet for the given prof
                     val liveData = MutableLiveData<Pair<String, String>>()
                     liveData.postValue(Pair("LOADING", cour[curIndex].inst))
                     application.profRatings[cour[curIndex].inst] = liveData
@@ -80,7 +79,9 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
         }
     }
 
+    //make it so Tuesday "T" isnt a substring of Thursday "Th"
     private fun normalizeTime(time: String): String {
+        if (time == "TBA") return time
         var time = time.replace("T", "Tu")
         time = time.replace("Tuh", "Th")
         return time
@@ -88,12 +89,14 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
 
     private fun safeGet (field: Element): String {
         if (field.childNodeSize() == 0) return ""
-        return field.childNode(0).toString()
+        return field.childNode(0).toString().trim()
     }
 
     private fun safeGetInt (field: Element): Int{
-        return safeGet(field).trim().toIntOrNull() ?: 0
+        return safeGet(field).toIntOrNull() ?: 0
     }
+
+    //task for getting UWaterloo course info html
     private inner class GetInfoTask : AsyncTask<URL, Void?, Void?>() {
 
         override fun doInBackground(vararg urls: URL): Void? {
@@ -104,8 +107,11 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                     dataString += inputLine
                 }
                 bufferedReader.close()
-                dataDoc = Jsoup.parse(dataString)
-                initCourse()
+                //make it into a tree structure class
+                val dataDoc = Jsoup.parse(dataString)
+                //create the section instances with the tree structure
+                populateUW(dataDoc)
+                onCourseReturned()
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -123,8 +129,10 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                     dataString += inputLine
                 }
                 bufferedReader.close()
+                //get the search query results from rate my prof, well use this to get the professor id
                 val profDoc = Jsoup.parse(dataString)
 
+                //try and find a matching prof to get their id
                 var profID = ""
                 profDoc.getElementsByClass("listing PROFESSOR").forEach { it ->
                     if (it.toString().contains("University of Waterloo")) {
@@ -133,26 +141,29 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                     }
                 }
                 if (profID != "") {
+                    //use the id to get the info from their specific page
                     val bufferedReader2 = BufferedReader(InputStreamReader(URL("https://www.ratemyprofessors.com/ShowRatings.jsp?tid=$profID").openStream()))
                     while (bufferedReader2.readLine()?.also { inputLine = it } != null) {
                         if (inputLine.contains("<div class=\"RatingValue__Numerator")) {
+                            //if at any point we find the rating numerator class
                             val match = Regex("RatingValue__Numerator-qw8sqy-2 gxuTRq").find(inputLine)
+                            //find where the class is in the returned string
                             var startIndex = match?.range?.start ?: 0
                             startIndex += "RatingValue__Numerator-qw8sqy-2 gxuTRq".length + 2
                             var rating = ""
-                            while (true) {
-                                if (inputLine[startIndex].isDigit() || inputLine[startIndex] == '.') {
-                                    rating += inputLine[startIndex]
-                                    startIndex++
-                                } else
-                                break
+                            //extract the rating from the string directly
+                            while (inputLine[startIndex].isDigit() || inputLine[startIndex] == '.') {
+                                rating += inputLine[startIndex]
+                                startIndex++
                             }
+                            //post the value to the livedata
                             (application as ApplicationBase).profRatings[inputs[1]]?.postValue(Pair<String, String>("$rating/5", inputs[1]))
                             break
                         }
                     }
                     bufferedReader2.close()
                 } else {
+                    //if anything goes wrong, post N/A
                     (application as ApplicationBase).profRatings[inputs[1]]?.postValue(Pair("N/A", inputs[1]))
                 }
             } catch (e: IOException) {

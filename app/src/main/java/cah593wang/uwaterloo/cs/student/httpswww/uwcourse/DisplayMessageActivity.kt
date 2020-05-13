@@ -22,15 +22,19 @@ class DisplayMessageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_message)
+
         val department = intent.getStringExtra(DEP)
         val courseNum = intent.getIntExtra(COURSE_NUM, 0)
         val term = intent.getIntExtra(TERM, 0)
+
         findViewById<TextView>(R.id.availableSections).bringToFront()
+        //start the course class to get course info from the webscraper inside the class
         course = object : Course(department, courseNum, term, this.application) {
             override fun onCourseReturned() {
                 val mainHandler = Handler(Looper.getMainLooper());
                 val myRunnable = Runnable {
-                        initAdapter() // This is your code
+                    //when the data is returned, use it to initialize the adapter
+                    initAdapter()
                 };
                 mainHandler.post(myRunnable)
             }
@@ -54,16 +58,10 @@ class DisplayMessageActivity : AppCompatActivity() {
     private fun initAdapter() {
         findViewById<TextView>(R.id.loading).visibility = View.GONE
 
+        //initialize the listview adapter with the course info
         val adapter = CustomListAdapter(this, course)
-        display = findViewById<ListView>(R.id.display)
+        display = findViewById(R.id.display)
         display.adapter = adapter
-        display.onItemClickListener = OnItemClickListener { adapterView, view, i, l -> //TODO add info to database
-            Toast.makeText(this@DisplayMessageActivity, "todo", Toast.LENGTH_SHORT).show()
-        }
-        display.onItemLongClickListener = OnItemLongClickListener { parent, view, position, id ->
-            Toast.makeText(this@DisplayMessageActivity, "todo", Toast.LENGTH_SHORT).show()
-            false
-        }
     }
 
     companion object {
