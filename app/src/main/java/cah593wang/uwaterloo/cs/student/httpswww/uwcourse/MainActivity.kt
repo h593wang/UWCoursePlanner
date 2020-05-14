@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     var conflictColor = 0
     var backgroundColor = 0
     var accentColor = 0
+    var grey = 0
     var white = 0
     var black = 0
 
@@ -147,6 +148,7 @@ class MainActivity : AppCompatActivity() {
         courseColor = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
         backgroundColor = ResourcesCompat.getColor(resources, R.color.colorMiddle, null)
         accentColor = ResourcesCompat.getColor(resources, R.color.colorPrimaryDark, null)
+        grey = ResourcesCompat.getColor(resources, R.color.grey, null)
         white = ResourcesCompat.getColor(resources, R.color.white, null)
         black = ResourcesCompat.getColor(resources, R.color.black, null)
 
@@ -194,7 +196,7 @@ class MainActivity : AppCompatActivity() {
 
         // 5 weekdays + 2 half width weekends, draws the vertical lines
         var xPosition = sectionWidth/ 2.toFloat()
-        paint.color = white
+        paint.color = grey
         //sunday
         canvas.drawLine(xPosition,0f,xPosition, height.toFloat(), paint)
         //monday
@@ -224,15 +226,15 @@ class MainActivity : AppCompatActivity() {
                 paint.color = accentColor
             }
             if (yPosition > headerSize) canvas.drawLine(0f,yPosition,width.toFloat(), yPosition, paint)
-            paint.color = white
+            paint.color = grey
         }
 
         canvas.drawLine(0f, 50f, width.toFloat(), headerSize, paint)
 
         textPaint.color = white
-        textPaint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12F, resources.displayMetrics)
+        textPaint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10F, resources.displayMetrics)
         val yVal = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12F, resources.displayMetrics)
-        xPosition = 10f
+        xPosition = 20f
         canvas.drawText("Sun", xPosition, yVal, textPaint)
         xPosition += sectionWidth*3/4
         canvas.drawText("Mon", xPosition, yVal, textPaint)

@@ -19,7 +19,7 @@ class CustomListAdapter(private var context: Activity, course: Course) : ArrayAd
         if (position == 0) {
             if (!this::layoutDefault.isInitialized)layoutDefault = rowView.findViewById<ConstraintLayout>(R.id.layout).layoutParams as ConstraintLayout.LayoutParams
             val layout = ConstraintLayout.LayoutParams((rowView.findViewById<ConstraintLayout>(R.id.layout).layoutParams as ConstraintLayout.LayoutParams))
-            layout.topMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 54f, context.resources.displayMetrics).toInt()
+            layout.topMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 58f, context.resources.displayMetrics).toInt()
             rowView.findViewById<ConstraintLayout>(R.id.layout).layoutParams = layout
         } else {
             rowView.findViewById<ConstraintLayout>(R.id.layout).layoutParams = layoutDefault
@@ -54,8 +54,8 @@ class CustomListAdapter(private var context: Activity, course: Course) : ArrayAd
         }
         //if its not ready, observe it until it is
         (context.application as ApplicationBase).profRatings[(getItem(position) as Section).inst]?.observeForever {
-            //this is stupid, since the items are reused, we need to make sure its still the prof we want
-            if (it?.second == (instQual.parent as ViewGroup).findViewById<TextView>(R.id.instTextView).text)
+            //since the items are reused, we need to make sure its still the prof we want
+            if (it?.second == instTextView.text)
                 instQual.text = it?.first ?: "N/A"
         }
         return rowView

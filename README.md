@@ -10,25 +10,25 @@ Prof ratings scraped from rate my prof: https://www.ratemyprofessors.com/ShowRat
 
 Demo flow Gif (Screenshots below)
 
-<img src="ezgif-3-7a27461e48c9.gif" alt="drawing" width="300"/>
+<img src="demo.gif" alt="drawing" width="300"/>
 
 Updated Screenshots coming
 
 Initial empty screen
 
-<img src="Screenshot_20200513-194850.jpg" alt="drawing" width="300"/>
+<img src="img1.jpg" alt="drawing" width="300"/>
 
 ---
 Courses search result screen
 
-<img src="Screenshot_20200513-194906.jpg" alt="drawing" width="300"/>
+<img src="img2.jpg" alt="drawing" width="300"/>
 
 ---
 Courses in cart and added to calendar screen
 
-<img src="Screenshot_20200513-194910.jpg" alt="drawing" width="300"/>
+<img src="img3.jpg" alt="drawing" width="300"/>
 
 ---
 Courses added to calendar and time conflict screen
 
-<img src="Screenshot_20200513-194916.jpg" alt="drawing" width="300"/>
+<img src="img4.jpg" alt="drawing" width="300"/>
