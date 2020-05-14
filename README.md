@@ -19,7 +19,7 @@ Initial empty screen
 <img src="img1.jpg" alt="drawing" width="300"/>
 
 ---
-Courses search result screen
+Courses search result screen, course data and prof ratings are webscraped
 
 <img src="img2.jpg" alt="drawing" width="300"/>
 
