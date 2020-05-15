@@ -6,6 +6,8 @@ Section data scraped from registrar website: http://www.adm.uwaterloo.ca/cgi-bin
 
 Prof ratings scraped from rate my prof: https://www.ratemyprofessors.com/ShowRatings.jsp?tid=2047091
 
+CURRENTLY IN REVIEW for play store release :D
+
 ### Screenshots for Shopify 
 
 Demo flow Gif (Screenshots below)
