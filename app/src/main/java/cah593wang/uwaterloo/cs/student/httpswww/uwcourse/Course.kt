@@ -33,6 +33,7 @@ abstract class Course(private var dep: String?, private var courseCode: String, 
         lateinit var eleTable :Element
         if (courseCode.contains("R") && elementArr.size >= 3) eleTable = elementArr[2]
         else if (!courseCode.contains(Regex("[a-zA-Z]")) && elementArr.size >= 2) eleTable = elementArr[1]
+        else if (elementArr.size == 2) eleTable = elementArr[1]
         else eleTable = elementArr.last()
 
         //get the rows from the table
