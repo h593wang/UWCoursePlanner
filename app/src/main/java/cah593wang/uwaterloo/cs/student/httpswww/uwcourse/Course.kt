@@ -12,7 +12,7 @@ import java.io.InputStreamReader
 import java.lang.Exception
 import java.net.URL
 
-abstract class Course(private var dep: String?, private var courseCode: Int, private var term: Int, val application: Application) {
+abstract class Course(private var dep: String?, private var courseCode: String, private var term: Int, val application: Application) {
     var dataString = ""
 
     abstract fun onCourseReturned()
@@ -29,11 +29,11 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
     private fun populateUW(dataDoc: Element) {
         cour = ArrayList()
         //get the tags that contain tables
-        var elementArr = dataDoc.getElementsByTag("tr")
+        var elementArr = dataDoc.getElementsByTag("table")
         lateinit var eleTable :Element
-        elementArr.forEach { ele ->
-            ele.getElementsByTag("table")?.let { if (it.size != 0) eleTable = it[0] }
-        }
+        if (courseCode.contains("R") && elementArr.size >= 3) eleTable = elementArr[2]
+        else if (!courseCode.contains(Regex("[a-zA-Z]")) && elementArr.size >= 2) eleTable = elementArr[1]
+        else eleTable = elementArr.last()
 
         //get the rows from the table
         elementArr = eleTable.getElementsByTag("tr")

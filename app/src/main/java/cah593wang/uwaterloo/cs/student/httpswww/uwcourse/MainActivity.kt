@@ -370,7 +370,7 @@ class MainActivity : AppCompatActivity() {
         val courseEditText = findViewById<EditText>(R.id.courseCodeEditTest)
         val courseString = courseEditText.text
         if (courseString.isNullOrEmpty()) return
-        val course = courseEditText.text.toString().toInt()
+        val course = courseEditText.text.toString()
         courseEditText.setText("")
 
         val depEditText = findViewById<EditText>(R.id.departmentEditText)

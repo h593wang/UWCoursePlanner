@@ -25,7 +25,7 @@ class DisplayMessageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_display_message)
 
         val department = intent.getStringExtra(DEP)
-        val courseNum = intent.getIntExtra(COURSE_NUM, 0)
+        val courseNum = intent.getStringExtra(COURSE_NUM)
         val term = intent.getIntExtra(TERM, 0)
 
         findViewById<TextView>(R.id.availableSections).bringToFront()
