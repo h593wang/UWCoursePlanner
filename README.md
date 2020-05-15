@@ -1,6 +1,6 @@
 # UWCoursePlanner
 
-University of Waterloo week course planner. Pulls info by webscraping from the university website. HTML data organized with JSoup.
+University of Waterloo week course planner. Pulls info by webscraping from the university website. HTML data organized with JSoup. Written in 5 days, old work was mostly scrapped in Java -> Kotlin conversion
 
 Section data scraped from registrar website: http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl?level=under&sess=1199&subject=MATH&cournum=135
 
