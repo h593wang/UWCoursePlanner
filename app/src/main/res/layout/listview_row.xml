@@ -34,10 +34,10 @@
             android:id="@+id/timeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/instTextView"
+            app:layout_constraintTop_toBottomOf="@id/instTextView"
             tools:text="12:30-01:20MWF" />
 
         <TextView
@@ -83,9 +83,10 @@
             android:id="@+id/room"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="TextView"
             app:layout_constraintBottom_toBottomOf="@+id/timeTextView"
-            app:layout_constraintEnd_toEndOf="@+id/instQual" />
+            app:layout_constraintStart_toEndOf="@+id/timeTextView" />
 
         <TextView
             android:id="@+id/capacity"
@@ -98,6 +99,24 @@
             app:layout_constraintStart_toStartOf="@+id/lecTextView"
             app:layout_constraintTop_toBottomOf="@id/lecTextView"
             tools:text="75/76" />
+
+        <TextView
+            android:id="@+id/timeTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/timeTextView"
+            app:layout_constraintTop_toBottomOf="@+id/timeTextView" />
+
+        <TextView
+            android:id="@+id/room2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/timeTextView2"
+            app:layout_constraintStart_toStartOf="@+id/room" />
     </android.support.constraint.ConstraintLayout>
 
 

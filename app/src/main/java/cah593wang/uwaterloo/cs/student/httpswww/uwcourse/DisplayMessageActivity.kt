@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import java.lang.Exception
 
 class DisplayMessageActivity : AppCompatActivity() {
     lateinit var course: Course
@@ -29,16 +30,21 @@ class DisplayMessageActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.availableSections).bringToFront()
         //start the course class to get course info from the webscraper inside the class
-        course = object : Course(department, courseNum, term, this.application) {
-            override fun onCourseReturned() {
-                val mainHandler = Handler(Looper.getMainLooper());
-                val myRunnable = Runnable {
-                    //when the data is returned, use it to initialize the adapter
-                    initAdapter()
-                };
-                mainHandler.post(myRunnable)
+            course = object : Course(department, courseNum, term, this.application) {
+                override fun onCourseReturned() {
+                    val mainHandler = Handler(Looper.getMainLooper());
+                    val myRunnable = Runnable {
+                        //when the data is returned, use it to initialize the adapter
+                        initAdapter()
+                    };
+                    mainHandler.post(myRunnable)
+                }
+
+                override fun onFailed(e: Exception) {
+                    finishFail(e.message ?: "ERROR")
+                }
             }
-        }
+
 
         findViewById<Button>(R.id.button).setOnClickListener {
             val returnIntent = Intent()
@@ -62,6 +68,13 @@ class DisplayMessageActivity : AppCompatActivity() {
         val adapter = CustomListAdapter(this, course)
         display = findViewById(R.id.display)
         display.adapter = adapter
+    }
+
+    private fun finishFail(result: String) {
+        val returnIntent = Intent()
+        returnIntent.putExtra("RESULT", result)
+        setResult(Activity.RESULT_CANCELED,returnIntent)
+        finish()
     }
 
     companion object {

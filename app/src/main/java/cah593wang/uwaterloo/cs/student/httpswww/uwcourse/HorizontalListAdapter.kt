@@ -33,6 +33,7 @@ class HorizontalListAdapter(private var context: Activity, val course: ArrayList
             holder.itemView.findViewById<Button>(R.id.delete).visibility = View.GONE
             holder.itemView.findViewById<TextView>(R.id.instTextView).text = ""
             holder.itemView.findViewById<TextView>(R.id.timeTextView).text = ""
+            holder.itemView.findViewById<TextView>(R.id.roomView).text = ""
             holder.itemView.findViewById<TextView>(R.id.lecName).text = ""
             holder.itemView.isSelected = false
             holder.itemView.setOnClickListener {  }
@@ -49,7 +50,8 @@ class HorizontalListAdapter(private var context: Activity, val course: ArrayList
         holder.itemView.findViewById<Button>(R.id.delete).visibility = View.VISIBLE
         holder.itemView.findViewById<TextView>(R.id.lecTextView).text = course[position].classNum.toString() + " - " + course[position].lecTitle
         holder.itemView.findViewById<TextView>(R.id.instTextView).text = course[position].inst
-        holder.itemView.findViewById<TextView>(R.id.timeTextView).text = course[position].times
+        holder.itemView.findViewById<TextView>(R.id.timeTextView).text = course[position].getTime(0)
+        holder.itemView.findViewById<TextView>(R.id.roomView).text = course[position].getRoom(0)
         holder.itemView.findViewById<TextView>(R.id.lecName).text = course[position].className
         holder.itemView.findViewById<Button>(R.id.delete).setOnClickListener(deleteListener)
         holder.itemView.setOnClickListener(listener)

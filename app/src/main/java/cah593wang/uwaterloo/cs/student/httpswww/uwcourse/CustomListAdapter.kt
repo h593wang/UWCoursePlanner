@@ -27,20 +27,34 @@ class CustomListAdapter(private var context: Activity, course: Course) : ArrayAd
 
         val instTextView = rowView.findViewById<TextView>(R.id.instTextView)
         val timeTextView = rowView.findViewById<TextView>(R.id.timeTextView)
+        val room = rowView.findViewById<TextView>(R.id.room)
         val lecTextView = rowView.findViewById<TextView>(R.id.lecTextView)
         val checkBox = rowView.findViewById<CheckBox>(R.id.checkBox)
         val instQual = rowView.findViewById<TextView>(R.id.instQual)
-        val room = rowView.findViewById<TextView>(R.id.room)
         val capacity = rowView.findViewById<TextView>(R.id.capacity)
-
+        val timeTextView2 = rowView.findViewById<TextView>(R.id.timeTextView2)
+        val room2 = rowView.findViewById<TextView>(R.id.room2)
         //setting the text based on the section info
         checkBox.isChecked = checkBoxes[position]
         instQual.text = "LOADING"
         instTextView.text = (getItem(position) as Section).inst
-        timeTextView.text = (getItem(position) as Section).times
+        timeTextView.text = (getItem(position) as Section).getTime(0)
         lecTextView.text = (getItem(position) as Section).lecTitle
-        room.text = (getItem(position) as Section).room
+        room.text = (getItem(position) as Section).getRoom(0)
         capacity.text = (getItem(position) as Section).enrollCur.toString() + "/" +(getItem(position) as Section).enrollMax
+        //handling multiple location/times
+        if ((getItem(position) as Section).times.size > 1) {
+            timeTextView2.visibility = View.VISIBLE
+            timeTextView2.text = (getItem(position) as Section).getTime(1)
+        } else {
+            timeTextView2.visibility = View.GONE
+        }
+        if ((getItem(position) as Section).room.size > 1) {
+            room2.visibility = View.VISIBLE
+            room2.text = (getItem(position) as Section).getRoom(1)
+        } else {
+            room2.visibility = View.GONE
+        }
 
         //when the item is clicked, toggle the checkBox
         rowView.setOnClickListener() { view ->

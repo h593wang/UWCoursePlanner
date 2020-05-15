@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UWCourse</string>
+    <string name="app_name">UW Course Planner</string>
     <string name="action_settings">Settings</string>
     <string name="button_send">Send</string>
 </resources>

@@ -1,8 +1,6 @@
 package cah593wang.uwaterloo.cs.student.httpswww.uwcourse
 
 import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
 import java.io.Serializable
 
 class Section : Serializable {
@@ -12,12 +10,22 @@ class Section : Serializable {
     var campLoc: String = ""
     var enrollMax = 0
     var enrollCur = 0
-    var times = ""
-    var room: String = ""
+    var times = ArrayList<String>()
+    var room = ArrayList<String>()
     var inst: String = ""
 
-    fun getStartHour(): Int {
-        val startEnd = times.split("-")
+    fun getTime(index: Int): String {
+        if (times.size >= index + 1) return times[index]
+        return ""
+    }
+
+    fun getRoom(index: Int): String {
+        if (room.size >= index + 1) return room[index]
+        return ""
+    }
+
+    fun getStartHour(index: Int): Int {
+        val startEnd = times[index].split("-")
         val startHourMin = startEnd[0].split(":")
 
         if (startHourMin[0].toInt() < 8) {
@@ -26,15 +34,15 @@ class Section : Serializable {
         return startHourMin[0].toInt()
     }
 
-    fun getStartMin(): Int {
-        val startEnd = times.split("-")
+    fun getStartMin(index: Int): Int {
+        val startEnd = times[index].split("-")
         val startHourMin = startEnd[0].split(":")
 
         return startHourMin[1].toInt()
     }
 
-    fun getEndHour(): Int {
-        val startEnd = times.split("-")
+    fun getEndHour(index: Int): Int {
+        val startEnd = times[index].split("-")
         val startHourMin = startEnd[0].split(":")
         val endHourMin = startEnd[1].split(":")
 
@@ -44,8 +52,8 @@ class Section : Serializable {
         return endHourMin[0].toInt()
     }
 
-    fun getEndMin(): Int {
-        val timeOfDay = times.replace(Regex("[a-zA-Z]"), "")
+    fun getEndMin(index: Int): Int {
+        val timeOfDay = times[index].replace(Regex("[a-zA-Z]"), "")
         val startEnd = timeOfDay.split("-")
         val endHourMin = startEnd[1].split(":")
         return endHourMin[1].toInt()

@@ -9,12 +9,14 @@ import org.jsoup.nodes.Element
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.lang.Exception
 import java.net.URL
 
 abstract class Course(private var dep: String?, private var courseCode: Int, private var term: Int, val application: Application) {
     var dataString = ""
 
     abstract fun onCourseReturned()
+    abstract fun onFailed(e: Exception)
 
     lateinit var cour: ArrayList<Section>
 
@@ -59,8 +61,8 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                         7 -> cour[curIndex].enrollCur = safeGetInt(field)
                         //8 ->
                         //9 ->
-                        10 -> cour[curIndex].times = normalizeTime(safeGet(field))
-                        11 -> cour[curIndex].room = safeGet(field)
+                        10 -> cour[curIndex].times.add(normalizeTime(safeGet(field)))
+                        11 -> cour[curIndex].room.add(safeGet(field))
                         12 -> cour[curIndex].inst = safeGet(field)
                     }
                     fieldIndex++
@@ -73,6 +75,15 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                     application.profRatings[cour[curIndex].inst] = liveData
                     //not loaded yet, so set a default value and load it
                     GetProfInfoTask().execute("https://www.ratemyprofessors.com/search.jsp?query=" + cour[curIndex].inst.replace(",", "+").trim(), cour[curIndex].inst)
+                }
+            } else if (ele.getElementsByTag("td").size == 13) { //handling additional data
+                var fieldIndex = 0
+                ele.getElementsByTag("td").forEach { field ->
+                    when (fieldIndex) {
+                        10 -> cour[curIndex].times.add(normalizeTime(safeGet(field)))
+                        11 -> cour[curIndex].room.add( safeGet(field))
+                    }
+                    fieldIndex++
                 }
             }
             //todo handle additional data
@@ -110,10 +121,16 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                 //make it into a tree structure class
                 val dataDoc = Jsoup.parse(dataString)
                 //create the section instances with the tree structure
-                populateUW(dataDoc)
+                try {
+                    populateUW(dataDoc)
+                } catch (e: Exception) {
+                    val exception = IOException("Unable to get course data from web results")
+                    onFailed(exception)
+                }
                 onCourseReturned()
             } catch (e: IOException) {
-                e.printStackTrace()
+                val exception = IOException("Unable to connect to the web")
+                onFailed(exception)
             }
             return null
         }
@@ -167,8 +184,8 @@ abstract class Course(private var dep: String?, private var courseCode: Int, pri
                     (application as ApplicationBase).profRatings[inputs[1]]?.postValue(Pair("N/A", inputs[1]))
                 }
             } catch (e: IOException) {
-                (application as ApplicationBase).profRatings[inputs[1]]?.postValue(Pair("N/A", inputs[1]))
-                e.printStackTrace()
+                val exception = IOException("Unable to connect to the web")
+                onFailed(exception)
             }
             return null
         }

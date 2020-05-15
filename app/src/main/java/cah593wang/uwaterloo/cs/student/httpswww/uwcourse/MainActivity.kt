@@ -55,9 +55,12 @@ class MainActivity : AppCompatActivity() {
                     if (!contains) sectionList.add(sec)
                 }
             }
+        } else if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_CANCELED) {
+            val t = Toast.makeText(this, data?.getStringExtra("RESULT"), Toast.LENGTH_LONG)
+            t.show()
         }
         //update the cart recyclerview
-        display.adapter.notifyDataSetChanged()
+        display.adapter?.notifyDataSetChanged()
     }
 
     //initialize the cart recyclerview
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             //update the adapter and the graphics
-            display.adapter.notifyDataSetChanged()
+            display.adapter?.notifyDataSetChanged()
             redrawCanvas()
         })
         val linearLayoutManager =  LinearLayoutManager(this)
@@ -253,16 +256,23 @@ class MainActivity : AppCompatActivity() {
         paint.color = courseColor
         textPaint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 7F, resources.displayMetrics)
         selectedSections.forEach {
-            drawSection(it)
+            for (i in it.times.indices) { drawSection(it, i) }
         }
 
         //detect conflicts
+        //map for the time range to the days of week it repersents
+        val sectionMap = HashMap<Int, String>()
+        var counter = 0
         paint.color = conflictColor
         val timeRanges = ArrayList<IntRange>(selectedSections.size)
         for (i in selectedSections.indices) {
             val sec = selectedSections[i]
-            if (sec.times == "TBA") continue
-            timeRanges.add(IntRange(sec.getStartHour()*60+sec.getStartMin(), sec.getEndHour()*60 + sec.getEndMin()))
+            for (x in sec.times.indices) {
+                if (sec.getTime(x) == "TBA" || sec.getTime(x) == "") continue
+                timeRanges.add(IntRange(sec.getStartHour(x) * 60 + sec.getStartMin(x), sec.getEndHour(x) * 60 + sec.getEndMin(x)))
+                sectionMap[counter] = sec.getTime(x)
+                counter++
+            }
         }
         for (i in timeRanges.indices) {
             for (x in timeRanges.indices) {
@@ -274,19 +284,19 @@ class MainActivity : AppCompatActivity() {
                     val startY = ((maxStart - 7*60f) / (15*60f) * height)
                     val endY = ((minEnd - 7*60f) / (15*60f) * height)
 
-                    if (selectedSections[i].times.contains("Su") && selectedSections[x].times.contains("Su"))
+                    if (sectionMap[i]?.contains("Su") == true && sectionMap[x]?.contains("Su") == true)
                         canvas.drawRoundRect(0f, startY,  sectionWidth/2f, endY, 10f, 10f, paint)
-                    if (selectedSections[i].times.contains("M") && selectedSections[x].times.contains("M"))
+                    if (sectionMap[i]?.contains("M") == true && sectionMap[x]?.contains("M") == true)
                         canvas.drawRoundRect(sectionWidth/2f, startY,  sectionWidth/2f + sectionWidth, endY, 10f, 10f, paint)
-                    if (selectedSections[i].times.contains("Tu") && selectedSections[x].times.contains("Tu"))
+                    if (sectionMap[i]?.contains("Tu") == true && sectionMap[x]?.contains("Tu") == true)
                         canvas.drawRoundRect(sectionWidth/2f + sectionWidth, startY,  sectionWidth/2f + 2*sectionWidth, endY, 10f, 10f, paint)
-                    if (selectedSections[i].times.contains("W") && selectedSections[x].times.contains("W"))
+                    if (sectionMap[i]?.contains("W") == true && sectionMap[x]?.contains("W") == true)
                         canvas.drawRoundRect(sectionWidth/2f + 2*sectionWidth, startY,  sectionWidth/2f + 3f*sectionWidth, endY, 10f, 10f, paint)
-                    if (selectedSections[i].times.contains("Th") && selectedSections[x].times.contains("Th"))
+                    if (sectionMap[i]?.contains("Th") == true && sectionMap[x]?.contains("Th") == true)
                         canvas.drawRoundRect(sectionWidth/2f + 3*sectionWidth, startY,  sectionWidth/2f + 4f*sectionWidth, endY, 10f, 10f, paint)
-                    if (selectedSections[i].times.contains("F") && selectedSections[x].times.contains("F"))
+                    if (sectionMap[i]?.contains("F") == true && sectionMap[x]?.contains("F") == true)
                         canvas.drawRoundRect(sectionWidth/2f + 4*sectionWidth, startY,  sectionWidth/2f + 5f*sectionWidth, endY, 10f, 10f, paint)
-                    if (selectedSections[i].times.contains("S") && selectedSections[x].times.contains("S"))
+                    if (sectionMap[i]?.contains("S") == true && sectionMap[x]?.contains("S") == true)
                         canvas.drawRoundRect(sectionWidth/2f + 5*sectionWidth, startY,  6f*sectionWidth, endY, 10f, 10f, paint)
                 }
             }
@@ -294,45 +304,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     //code for drawing the given section onto the calendar
-    private fun drawSection(section: Section) {
-        if (section.times == "TBA") return
-        val startY = ((section.getStartHour()*60 + section.getStartMin() - 7*60f) / (15*60f) * height)
-        val endY = ((section.getEndHour()*60 + section.getEndMin() - 7*60f) / (15*60f) * height)
+    private fun drawSection(section: Section, index: Int) {
+        if (section.times[index] == "TBA" || section.times[index] == "") return
+        val startY = ((section.getStartHour(index)*60 + section.getStartMin(index) - 7*60f) / (15*60f) * height)
+        val endY = ((section.getEndHour(index)*60 + section.getEndMin(index) - 7*60f) / (15*60f) * height)
 
         val line = 20f
 
-        if (section.times.contains("Su")) {
+        if (section.times[index].contains("Su")) {
             canvas.drawRoundRect(0f, startY, sectionWidth/2f, endY, 10f, 10f, paint)
             canvas.drawText(section.className, 0 + offset, startY + offset, textPaint)
             canvas.drawText(section.lecTitle, 0 + offset, startY + offset + line, textPaint)
 
         }
-        if (section.times.contains("M")) {
+        if (section.times[index].contains("M")) {
             canvas.drawRoundRect(sectionWidth/2f, startY, sectionWidth/2f + sectionWidth, endY, 10f, 10f, paint)
             canvas.drawText(section.className, sectionWidth/2f + offset, startY + offset, textPaint)
             canvas.drawText(section.lecTitle, sectionWidth/2f + offset, startY + offset + line, textPaint)
         }
-        if (section.times.contains("Tu")) {
+        if (section.times[index].contains("Tu")) {
             canvas.drawRoundRect(sectionWidth/2f + sectionWidth, startY, sectionWidth/2f + 2*sectionWidth, endY, 10f, 10f, paint)
             canvas.drawText(section.className, sectionWidth/2f + sectionWidth + offset, startY + offset, textPaint)
             canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth + offset, startY + offset + line, textPaint)
         }
-        if (section.times.contains("W")) {
+        if (section.times[index].contains("W")) {
             canvas.drawRoundRect(sectionWidth/2f + 2*sectionWidth, startY, sectionWidth/2f + 3*sectionWidth, endY, 10f, 10f, paint)
             canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 2 + offset, startY + offset, textPaint)
             canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 2 + offset, startY + offset + line, textPaint)
         }
-        if (section.times.contains("Th")) {
+        if (section.times[index].contains("Th")) {
             canvas.drawRoundRect(sectionWidth/2f + 3*sectionWidth, startY, sectionWidth/2f + 4*sectionWidth, endY, 10f, 10f, paint)
             canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 3 + offset, startY + offset, textPaint)
             canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 3 + offset, startY + offset + line, textPaint)
         }
-        if (section.times.contains("F")) {
+        if (section.times[index].contains("F")) {
             canvas.drawRoundRect(sectionWidth/2f + 4*sectionWidth, startY, sectionWidth/2f + 5*sectionWidth, endY, 10f, 10f, paint)
             canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 4 + offset, startY + offset, textPaint)
             canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 4 + offset, startY + offset + line, textPaint)
         }
-        if (section.times.contains("S")) {
+        if (section.times[index].contains("S")) {
             canvas.drawRoundRect(sectionWidth/2f + 5*sectionWidth, startY,  6f*sectionWidth, endY, 10f, 10f, paint)
             canvas.drawText(section.className, sectionWidth/2f + sectionWidth * 5 + offset, startY + offset, textPaint)
             canvas.drawText(section.lecTitle, sectionWidth/2f + sectionWidth * 5 + offset, startY + offset + line, textPaint)
@@ -358,11 +368,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         val courseEditText = findViewById<EditText>(R.id.courseCodeEditTest)
+        val courseString = courseEditText.text
+        if (courseString.isNullOrEmpty()) return
         val course = courseEditText.text.toString().toInt()
         courseEditText.setText("")
 
         val depEditText = findViewById<EditText>(R.id.departmentEditText)
         val dep = depEditText.text.toString()
+        if (dep.isEmpty()) return
         depEditText.setText("")
         intent.putExtra(DEP, dep.toUpperCase())
         intent.putExtra(COURSE_NUM, course)
