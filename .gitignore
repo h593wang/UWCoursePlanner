@@ -4,7 +4,11 @@
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
+/.idea/caches
 .DS_Store
 /build
 /captures
 .externalNativeBuild
+output.json
+keystore.properties
+build_file_checksums.ser
