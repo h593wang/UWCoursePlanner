@@ -56,8 +56,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         } else if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_CANCELED) {
-            val t = Toast.makeText(this, data?.getStringExtra("RESULT"), Toast.LENGTH_LONG)
-            t.show()
+            val result = data?.getStringExtra("RESULT")
+            lateinit var t: Toast
+            if (!result.isNullOrEmpty()) {
+                t = Toast.makeText(this, result, Toast.LENGTH_LONG)
+                t.show()
+            }
         }
         //update the cart recyclerview
         display.adapter?.notifyDataSetChanged()

@@ -81,8 +81,8 @@ abstract class Course(private var dep: String?, private var courseCode: String, 
                 var fieldIndex = 0
                 ele.getElementsByTag("td").forEach { field ->
                     when (fieldIndex) {
-                        10 -> cour[curIndex].times.add(normalizeTime(safeGet(field)))
-                        11 -> cour[curIndex].room.add( safeGet(field))
+                        10 -> if (safeGet(field) != "&nbsp;") cour[curIndex].times.add(normalizeTime(safeGet(field)))
+                        11 -> if (safeGet(field) != "&nbsp;") cour[curIndex].room.add( safeGet(field))
                     }
                     fieldIndex++
                 }
