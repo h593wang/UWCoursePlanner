@@ -6,7 +6,7 @@ Section data scraped from registrar website: http://www.adm.uwaterloo.ca/cgi-bin
 
 Prof ratings scraped from rate my prof: https://www.ratemyprofessors.com/ShowRatings.jsp?tid=2047091
 
-Puhlished to the Play Store: play.google.com/store/apps/details?id=cah593wang.uwaterloo.cs.student.httpswww.uwcourse
+Puhlished to the Play Store: https://play.google.com/store/apps/details?id=cah593wang.uwaterloo.cs.student.httpswww.uwcourse
 
 ### Screenshots for Shopify 
 
